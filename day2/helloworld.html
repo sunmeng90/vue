@@ -12,9 +12,16 @@
         <p>v-bind: <span v-bind:title="message">Hover your mouse over me for a few seconds to see my dynamically bound title!</span></p>
         <p>v-if: </p>
         <p>v-for:
+            <input type="text" name="todo" v-on:/>
             <ol>
                 <li v-for="todo in todos">{{todo.text}}</li>
             </ol>
+        </p>
+        <p>computed: {{ reverseMessage }}</p>
+        <p>watch example:
+            Question: <input type="text" v-model="question" placeholder="Please type a question"><br>
+            Answer: {{ answer }}
+
         </p>
         <p>method: {{ getMessage('Grettings:') }}</p>
         <p>Event:
@@ -23,10 +30,9 @@
         <p>Event:
             <button v-on:click='clickBtnWithArgs("grettings: ", $event)'>click me</button>
         </p>
-        <p></p>
-        <p></p>
-        <p></p>
-        <p></p>
+        <p>v-model(two-way data bind): <input type="text" name="message" v-model="message">
+            
+        </p>
     </div>
     <script type="text/javascript">
     var app = new Vue({
@@ -39,11 +45,20 @@
                 text: 'Learn Vue'
             }, {
                 text: 'Build something awesome'
-            }]
+            }],
+            question:'',
+            answer:'I cannot give u an answer until you ask a question'
+        },
+        computed:{
+            reverseMessage: function(){
+                //computed properties are cached based on their dependencies. A computed property will only re-evaluate when some of its dependencies have changed. 
+                return this.message.split('').reverse().join('');
+            }
         },
         watch: {//An object where keys are expressions to watch and values are the corresponding callbacks. 
-            todos:function(){
-
+            question:function(newQuestion){
+                this.answer = 'Waiting for u to stop typing';
+                this.getAnswer();
             }
         },
         methods: {
@@ -55,6 +70,17 @@
             },
             clickBtnWithArgs: function(grettings, event) {
                 console.log(grettings + " " + this.message, event);
+            },
+            getAnswer: function(){
+                if(this.question.indexOf('?') === -1){
+                    this.answer = 'Questions usually contain a question mark';
+                    return
+                }
+                this.answer = 'Thinking';
+                var vm = this;
+                setTimeout(function(){
+                    vm.answer = 'This is just a dummy answer for test purpose';
+                }, 500);
             }
         }
     });
